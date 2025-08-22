@@ -15,8 +15,7 @@ namespace Waffler\Bridge\Laravel\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Waffler\Bridge\Laravel\DirectoryResolvers\DirectoryResolverInterface;
-use Waffler\Component\Generator\Factory\FactoryDefaults;
+use Waffler\Component\Generator\GeneratorDefaults;
 
 #[AsCommand(
     'waffler:clear',
@@ -26,9 +25,12 @@ class WafflerClearCommand extends Command
 {
     public function handle(): void
     {
-        $directory = FactoryDefaults::IMPL_CACHE_DIRECTORY;
-        if (is_dir(FactoryDefaults::IMPL_CACHE_DIRECTORY)) {
-            array_map(unlink(...), glob("$directory/*.php"));
+        $directory = GeneratorDefaults::IMPL_CACHE_DIRECTORY;
+        if (is_dir(GeneratorDefaults::IMPL_CACHE_DIRECTORY)) {
+            $files = glob("$directory/*.php");
+            if ($files !== false) {
+                array_map(unlink(...), $files);
+            }
         }
         $this->info('Waffler Cache cleared.');
     }
